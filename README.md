@@ -1,97 +1,42 @@
 # G.Leone_F.Carey_Final_Project
-#First step:
-#Opened large data set file in excel and converted to .csv then opened in jedit
-#We used jedit as all our columns were moved to the same column so we used jedit 
-#to seperate them into single columns.
+The data taken from a ROV on a ship in the NE Atlantic
+CTD data file which contains over 3 Gb of information 
+For the purpose of this project we condensed this massive files in two smaller sub data sets which contain the information we needed whilst removing unwanted information. This was done in excel
 
-#Search for: (\w+\:\w+\:\w+\s\w+)\,(\d+\/\d+\/\d+)\,(\-\d+\.\d+)\,(\d+\.\d+)\,(\d+\.\d+)\,(\d+\.\d+)\,(\d+\.\d+)
-#Replace with: $1 $2 $3 $4 $5 $6 $7
+Excel, Python and R studio or R are required
 
-#For the CTD data we only wanted to use the first 10m of depth. 
-#Deleted excess rows using jedit.
-#Used R to build two plots.
-#Plot 1 - Salinity vs. Depth
-#Plot 2 -Temperature vs. Depth
+PART 1 CTD
 
-#For Salinity vs Depth:
-data = read.csv(file = "CTD_DATA_third_try.csv", sep =",")
-data = data[seq(from=1, to=nrow(data), by = 30),]
-#data = data[seq(from=1, to=1081),]
-data$Depth = data$Depth - max(data$Depth)
-data = data[order(data$Depth,decreasing=TRUE),]
-plot(data$Salinity, data$Depth,type="o")
-plot(data$Salinity, data$Depth,type="o",col="red",xlab="Salinity",ylab="Depth (m)",main="Salinity vs. Depth")
+Save CTD_DATA_third_try.csv in a new folder with the script Script CTD graphs.R and the script Script temp CTD graphs.R
+Open R studio
+Make sure all files are saved in the same directory and use this directory while using R
+Open the file CTD_DATA_third_try.csv in R studio using the function read.csv
 
-#For Temparature vs. Depth 
-data = read.csv(file = "CTD_DATA_third_try.csv", sep =",")
-data = data[seq(from=1, to=nrow(data), by = 30),]
-#data = data[seq(from=1, to=1081),]
-data$Depth = data$Depth - max(data$Depth)
-data = data[order(data$Depth,decreasing=TRUE),]
-plot(data$Temperature, data$Depth,type="p")
-plot((data$Temperature),(data$Depth),type="p",col="blue",xlab="Temperature",ylab="Depth (m)",main="Temperature vs. Depth")
+For the salinity graph do as follows:
+Run the script provided named Script CTD graphs.R
+This will output a salinity vs depth graph
+If you want to save the graph as a picture or pdf use the export command
 
-#These scripts gave us our graphs.
+For temperature graph do as follows:
+Run the script provided named Script CTD temp graphs.R
+This will output a temperature vs depth graph
+If you want to save the graph as a picture or pdf use the export command
 
-#We used python to edit our orignal datafile (CTD_small.csv)
-#We wanted to read every 30minutes instead of every second. 
+PART 2 temperature changes over time
 
-#!/usr/bin/env python
+Make a new folder which contains the Final_Python_Script.py and the file CTD_small.csv
+Using Jedit open the file Final_Python_Script.py
+In the terminal move to the folder that you just created containg those files
+Use command chmod u+x Final_Python_Script.py to modify the permission
+use the command ./Final_Python_Script.py to run the script
+Check the folder, you should have a new file called CTD_small.csv.csv
+If you want to run the script for more than once be sure to delete the new file as the python script will keep adding info in the same file instead of updating it
 
-
-#import itertools for efficient looping
-import itertools
-#import csv to read a csv file
-import csv
-#save input csv file as MyFile and the name of the file we want to ouput as OutFile. 
-#Put all this before loop
-MyFile = ('CTD_small.csv')
-InFile = open(MyFile,'r')
-OutFileName=MyFile + '.csv'
-OutFile=open(OutFileName, 'wa')
-
-#open csv file and loop it to read every 1800 lines thereby reading the file for every 30 mins as opposed to every second.
-
-with open ('CTD_small.csv') as csvfile:
-	readCSV = csv.reader(csvfile)
-	for row in itertools.islice(readCSV, None, None, 1800):
-#If rerunning this script be sure to delete the new output file each time
-#or else it will just print new lines to the file instead of updating it.
-		print >>OutFile, ",".join(row)
-
-#OutFile.write()
-#This will save our file as CTD_small.csv.csv. 
-InFile.close()
-OutFile.close()
-
-#Then we used R to construct a graph of temperature changes with depth across time using the output file CTD_small.csv.csv
-#opened file and renamed variables.
-d=read.csv("CTD_small.csv.csv")
-d$Depth = d$Depth * -1
-#x= d$Time
-#y=d$Depth
-#z=d$TEMPERATURE
-#d = d[c(1,5,7)]
-
-#This changed the time format from digital clock to numbers (minutes).
-d$Time = seq(from=0,to=(length(d$Time)-1)*30,by=30)
-
-#This function creates a colour pallette for the graph.
-colfunc <- colorRampPalette(c("blue", "red"))
-plot(x=d$Time,y=d$Depth,pch = 19, cex=2, col=gray((1:100)/100)[d$TEMPERATURE])
-
-#This builds the graph. You can use pch to change shape of points and cex to change dimensions.
-layout(matrix(1:2,ncol=2), width = c(2,1),height = c(1,1))
-plot(x=d$Time,y=d$Depth,pch = 19, cex=2, col=colfunc(20)[d$TEMPERATURE], xlab="Time(min)", ylab="Depth(m)", main = "Temperature Changes With Depth")
-#This provides the legend which indicates colour changes on the graphs colour palette.
-legend_image <- as.raster(matrix(colfunc(20), ncol=1))
-plot(c(0,2),c(0,1),type = 'n', axes = F,xlab = '', ylab = '', main = 'Temperature')
-
-#This labels the legend.
-text(x=1.5, y = seq(0,1,l=5), labels = seq(8,11,l=5))
-rasterImage(legend_image, 0, 0, 1,1)
-
-
+Open now R studio and using the command read.csv open the file CTD_small.csv.csv 
+Run the sript called Transect_Script.R
+This will produce a graph for the temperature changes with depth time will be on x axes and depth on the y axes
+there will be a legend describing the changing colors according to the temperature that they represent
+If you want to save the graph as a picture or pdf use the export command
 
 
 
