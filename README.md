@@ -1,5 +1,4 @@
 # G.Leone_F.Carey_Final_Project
-README, PRESENTATION, SCRIPTS
 #First step:
 #Opened large data set file in excel and converted to .csv then opened in jedit
 #We used jedit as all our columns were moved to the same column so we used jedit 
